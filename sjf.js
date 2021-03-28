@@ -9,11 +9,22 @@
 //         if (wt[x] < 0):
 //             wt[x] = 0
 //     return wt
+
+function createDinamicArray(processos) {
+  const array = [];
+  const emptyArray = new Array(processos.length);
+  for (let index of emptyArray) {
+    array.push(0);
+  }
+  return array;
+}
+
 function waitingTime(processos) {
-  const tempoServico = processos.length * [0];
-  const wt = processos.length * [0];
+  const dinamicArray = createDinamicArray(processos);
+  const tempoServico = dinamicArray;
+  const wt = dinamicArray;
+
   for (let x = 1; x <= processos.length - 1; x++) {
-    console.log(processos[x]);
     tempoServico[x] = tempoServico[x - 1] + processos[x - 1][2];
     wt[x] = tempoServico[x] - processos[x][1];
     if (wt[x] < 0) {
@@ -32,7 +43,8 @@ function waitingTime(processos) {
 //     return tat
 
 function turnAroundTime(processos) {
-  const tat = [0] * processos.length;
+  const dinamicArray = createDinamicArray(processos);
+  const tat = dinamicArray;
   const wt = waitingTime(processos);
   for (let x = 0; x <= processos.length - 1; x++) {
     tat[x] = processos[x][2] + wt[x];
@@ -51,18 +63,13 @@ function turnAroundTime(processos) {
 //     return (wt / len(processos))
 
 function averageTat(processos) {
-  const teste = turnAroundTime(processos);
-  console.log("teste");
-  console.log(teste);
   const tat = turnAroundTime(processos).reduce((acc, val) => acc + val);
   const tatAverage = tat / processos.length;
   return tatAverage;
 }
 
 function averageWt(processos) {
-  const teste = waitingTime(processos);
-  console.log(teste);
-  const wt = waitingTime(processos);
+  const wt = waitingTime(processos).reduce((acc, val) => acc + val);
   const averageWt = wt / processos.length;
   return averageWt;
 }
@@ -76,8 +83,8 @@ function averageWt(processos) {
 //     return processos
 
 function sjf(processos) {
-  for (let i = 0; i <= processos.length; i++) {
-    for (let j = 0; j <= processos.length - 1; j++) {
+  for (let i = 0; i <= processos.length - 1; i++) {
+    for (let j = 0; j <= processos.length - 2; j++) {
       if (processos[j][2] > processos[j + 1][2]) {
         processos[j] = processos[j + 1];
         processos[j + 1] = processos[j];
@@ -142,3 +149,5 @@ const avgWtSJF = averageWt(processos);
 const avgTatSJF = averageTat(processos);
 
 console.log(processosSJF);
+console.log(`Average Waiting Time: ${avgWtSJF}`);
+console.log(`Average Turn-Around Time: ${avgTatSJF}`);
