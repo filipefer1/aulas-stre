@@ -1,47 +1,11 @@
 const readline = require("readline");
-const util = require("util");
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const question = util.promisify(rl.question).bind(rl);
-
 let processos = [];
-
-async function userInput() {
-  let qtdProcessos;
-  let at;
-  let bt;
-  // console.log("Quantidade de processos:");
-  // rl.on("line", (line) => {
-  //   console.log(`Received: ${line}`);
-  // });
-
-  // rl.close();
-
-  try {
-    const qtd = await question("Quantidade de processos? ");
-    rl.close();
-  } catch (error) {
-    console.log(error);
-  }
-
-  // readline.question("Quantidade de processos:", (qtd) => {
-  //   qtdProcessos = qtd;
-  //   teste();
-
-  //   // for (let i = 0; i <= qtd; i++) {
-  //   //   readline.question("Arrival time:", (at) => {
-  //   //     readline.question("Burst Time: ", (bt) => {
-  //   //       processos.push([at, bt]);
-  //   //     });
-  //   //   });
-  //   // }
-  //   readline.close();
-  // });
-}
 
 function roundRobin(processos, quantum, qntProcessos) {
   const btRestante = createDinamicArray(qntProcessos);
@@ -79,48 +43,6 @@ function roundRobin(processos, quantum, qntProcessos) {
   return wt;
 }
 
-// def round_robin(processos, quantum, qnt_processos):
-//     # Criando uma lista de Burst Time restante dos processos
-//     bt_restante = [0] * qnt_processos
-//     # Criando uma lista de Waiting Time
-//     wt = [0] * qnt_processos
-//     # Copiando BurstTime dos processos para o bt_restante
-//     for i in range(qnt_processos):
-//         bt_restante[i] = processos[i][2]
-
-//     tempo = 0 # Tempo total que será adicionado ao WaitingTime
-//     overhead = 1 # Valor hipotetico para o tempo gasto na troca de contexto entre processos
-
-//     while True:
-//         # Variavel de Controle, verifica se os processos foram
-//         # finalizados ou não
-//         finalizados = True
-//         for i in range(qnt_processos):
-//             tempo += overhead # Para cada troca de contexto entre os processos, Adicionar ao Tempo Total
-
-//             # Se for maior que 0, ainda há processos a serem
-//             # Finalizados
-//             if bt_restante[i] > 0:
-//                 finalizados = False
-//                 # Se o tempo restante for maior que Quantum
-//                 if bt_restante[i] > quantum:
-//                     # Somar quantum ao tempo de processamento
-//                     tempo += quantum
-//                     # Retirar do BurstTime restante o Tempo(quantum)
-//                     # que ja foi processado
-//                     bt_restante[i] -= quantum
-//                 else: # Caso o tempo restante seja menor que quantum
-//                     # Somar ao tempo, o tempo restante de bt
-//                     tempo += bt_restante[i]
-//                     # WaitingTime = tempo_total - burst_time do processo
-//                     wt[i] = tempo - processos[i][2]
-//                     # Zerando burst time
-//                     bt_restante[i] = 0
-//         # Se todos os Processos foram concluídos
-//         if (finalizados == True):
-//             break
-//     return wt # Retornar Lista de WaitingTime
-
 function createDinamicArray(qtdProcessos) {
   const array = [];
   const emptyArray = new Array(qtdProcessos);
@@ -152,16 +74,7 @@ function averageTat(tat, qtdProcessos) {
   return tatAverage;
 }
 
-function main() {
-  const processos = [
-    ["P1", 3, 4],
-    ["P2", 5, 6],
-  ];
-
-  const quantum = 5;
-  const qtdProcessos = qtdProcesssF();
-  console.log(qtdProcessos);
-
+function main(qtdProcessos, processos, quantum) {
   const wt = roundRobin(processos, quantum, qtdProcessos);
   const tat = turnAroundTime(processos, wt, qtdProcessos);
   const avgTat = averageTat(tat, qtdProcessos);
@@ -181,18 +94,44 @@ function main() {
     );
   }
 
-  // for proc in range(len(processos)):
-  //     console.log(f"{processos[proc][0]}\t\t\t{processos[proc][2]}\t\t\t{processos[proc][1]}\t\t\t{wt[proc]}\t\t\t         {tat[proc]}\t\t\t\n")
-
   console.log(`Average Waiting Time: ${avgWt}`);
   console.log(`Average Turn-Around Time: ${avgTat}`);
 }
 
-let qtdProcessos;
-rl.on("line", (line) => {
-  qtdProcessos = line;
+async function run(qtdProcessos, quantum) {
+  for await (const answer of questions(qtdProcessos)) {
+    processos.push(answer);
+    if (answer == "done") break;
+  }
+
+  const processosFormatados = processos.map((proc) =>
+    proc.map((p) => {
+      if (isNaN(p)) {
+        return p;
+      }
+      return Number(p);
+    })
+  );
+
+  main(qtdProcessos, processosFormatados, quantum);
+}
+
+async function* questions(qtd) {
+  try {
+    for (let i = 0; i < qtd; i++) {
+      yield new Promise((resolve) =>
+        rl.question("Arrival Time: ", (av) => {
+          rl.question("Burst Time: ", (bt) => resolve([`P${i}`, av, bt]));
+        })
+      );
+    }
+  } finally {
+    rl.close();
+  }
+}
+
+rl.question("Quantidade de processos: ", (qtd) => {
+  rl.question("Informe o Quantum: ", (qt) => {
+    run(qtd, +qt);
+  });
 });
-
-console.log(qtdProcessos);
-
-// userInput();
