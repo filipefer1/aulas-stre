@@ -1,29 +1,46 @@
-const readline = require("readline").createInterface({
+const readline = require("readline");
+const util = require("util");
+
+const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-function userInput() {
+const question = util.promisify(rl.question).bind(rl);
+
+let processos = [];
+
+async function userInput() {
   let qtdProcessos;
   let at;
   let bt;
-  let processos = [];
+  // console.log("Quantidade de processos:");
+  // rl.on("line", (line) => {
+  //   console.log(`Received: ${line}`);
+  // });
 
-  readline.question("Quantidade de processos:", (qtd) => {
-    qtdProcessos = qtd;
+  // rl.close();
 
-    console.log(qtd);
+  try {
+    const qtd = await question("Quantidade de processos? ");
+    rl.close();
+  } catch (error) {
+    console.log(error);
+  }
 
-    for (let i = 0; i <= qtd; i++) {
-      readline.question("Arrival time:", (at) => {
-        readline.question("Burst Time: ", (bt) => {
-          processos.push([at, bt]);
-        });
-      });
-    }
-  });
+  // readline.question("Quantidade de processos:", (qtd) => {
+  //   qtdProcessos = qtd;
+  //   teste();
 
-  return { qtdProcessos, processos };
+  //   // for (let i = 0; i <= qtd; i++) {
+  //   //   readline.question("Arrival time:", (at) => {
+  //   //     readline.question("Burst Time: ", (bt) => {
+  //   //       processos.push([at, bt]);
+  //   //     });
+  //   //   });
+  //   // }
+  //   readline.close();
+  // });
 }
 
 function roundRobin(processos, quantum, qntProcessos) {
@@ -171,4 +188,11 @@ function main() {
   console.log(`Average Turn-Around Time: ${avgTat}`);
 }
 
-userInput();
+let qtdProcessos;
+rl.on("line", (line) => {
+  qtdProcessos = line;
+});
+
+console.log(qtdProcessos);
+
+// userInput();
