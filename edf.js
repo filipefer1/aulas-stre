@@ -1,20 +1,3 @@
-// def hiper_periodo(processos, qnt):
-//     # Hiper Periodo é o maior periodo dentre todos os processos
-//     temp = 0
-//     for i in range(qnt):
-//         if processos[i][3] > temp:
-//             temp = processos[i][3]
-//     return temp
-
-// def escolher_menor_deadline(processos, qnt, deadlines):
-//     menor_deadline = 10000
-//     escolhido = -1
-//     for i in range(qnt):
-//         if deadlines[i] < menor_deadline:
-//             menor_deadline = deadlines[i]
-//             escolhido = i
-//     return escolhido
-
 function createDinamicArray(qnt) {
   const array = [];
   const emptyArray = new Array(qnt);
@@ -58,9 +41,9 @@ function edf(processos, qnt) {
     periodos[i] = processos[i][3];
   }
 
-  console.log(`Processos: ${processos}`);
-  console.log(`Deadlines: ${deadlines}`);
-  console.log(`Periodos: ${periodos}\n`);
+  console.log("Processos:", processos);
+  console.log("Deadlines: ", deadlines);
+  console.log("Periodos: ", periodos, "\n");
 
   let contador = createDinamicArray(qnt);
 
