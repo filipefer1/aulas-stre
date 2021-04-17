@@ -20,9 +20,12 @@ function waitingTime(processos) {
   const dinamicArray = createDinamicArray(processos);
   const tempoServico = dinamicArray;
   const wt = dinamicArray;
+  const tempo_servico2 = [];
+  tempo_servico2.push(0);
 
   for (let x = 1; x <= processos.length - 1; x++) {
-    tempoServico[x] = tempoServico[x - 1] + processos[x - 1][2];
+    tempoServico[x] = tempo_servico2[x - 1] + processos[x - 1][2];
+    tempo_servico2.push(tempoServico[x]);
     wt[x] = tempoServico[x] - processos[x][1];
     if (wt[x] < 0) {
       wt[x] = 0;
@@ -54,14 +57,17 @@ function averageWt(processos) {
 }
 
 function sjf(processos) {
-  for (let i = 0; i <= processos.length - 1; i++) {
-    for (let j = 0; j <= processos.length - 2; j++) {
+  for (let i = 0; i < processos.length; i++) {
+    for (let j = 0; j < processos.length - 1; j++) {
       if (processos[j][2] > processos[j + 1][2]) {
-        processos[j] = processos[j + 1];
-        processos[j + 1] = processos[j];
+        const processJ = processos[j];
+        const processJ1 = processos[j + 1];
+        processos[j] = processJ1;
+        processos[j + 1] = processJ;
       }
     }
   }
+
   return processos;
 }
 
@@ -69,13 +75,6 @@ function main(processos) {
   console.log(
     ":::::::::::::::::::::::::::::::::::SJF:::::::::::::::::::::::::::::::::::"
   );
-
-  // const processos = [
-  //   ["P1", 3, 4],
-  //   ["P2", 5, 6],
-  // ];
-
-  // console.log(teste, processos);
 
   const wt = waitingTime(processos);
   const tat = turnAroundTime(processos);
@@ -102,10 +101,23 @@ function main(processos) {
   console.log("\n:::::::::::::::::::::::DEPOIS::::::::::::::::::::::\n");
 
   const processosSJF = sjf(processos);
-  const wtSJF = waitingTime(processos);
-  const tatSJF = turnAroundTime(processos);
-  const avgWtSJF = averageWt(processos);
-  const avgTatSJF = averageTat(processos);
+  const wtSJF = waitingTime(processosSJF);
+  const tatSJF = turnAroundTime(processosSJF);
+  const avgWtSJF = averageWt(processosSJF);
+  const avgTatSJF = averageTat(processosSJF);
+
+  console.log(
+    "| Process |\t| Burst Time |\t\t| Arrival Time |\t| Waiting Time |\t| Turn-Around Time |\t| Completion Time |\n\n"
+  );
+  for (let proc = 0; proc < processosSJF.length; proc++) {
+    console.log(
+      `${processosSJF[proc][0]}\t\t\t${processosSJF[proc][2]}\t\t\t${
+        processosSJF[proc][1]
+      }\t\t\t${wtSJF[proc]}\t\t\t${tatSJF[proc]}\t\t\t${
+        tatSJF[proc] + processosSJF[proc][1]
+      }\n`
+    );
+  }
 
   console.log(`Average Waiting Time: ${avgWtSJF}`);
   console.log(`Average Turn-Around Time: ${avgTatSJF}`);
@@ -125,8 +137,6 @@ async function run(qtdProcessos) {
       return Number(p);
     })
   );
-  console.log(processosFormatados);
-
   main(processosFormatados);
 }
 

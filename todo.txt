@@ -1,4 +1,0 @@
-(SJF)
-Adicionar user input
-Arrumar a formatação dos consoles.logs
-

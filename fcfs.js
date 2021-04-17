@@ -21,14 +21,20 @@ function waitingTime(processos) {
   const tempo_servico = dinamicArray;
   tempo_servico[0] = 0;
   const wt = dinamicArray;
+  const tempo_servico2 = [];
+  tempo_servico2.push(0);
 
   for (let x = 1; x <= processos.length - 1; x++) {
-    tempo_servico[x] = tempo_servico[x - 1] + processos[x - 1][1];
+    console.log(tempo_servico[x], "--", tempo_servico[x - 1]);
+    tempo_servico[x] = tempo_servico2[x - 1] + processos[x - 1][1];
+    tempo_servico2.push(tempo_servico[x]);
+
     wt[x] = tempo_servico[x] - processos[x][0];
     if (wt[x] < 0) {
       wt[x] = 0;
     }
   }
+
   return wt;
 }
 
