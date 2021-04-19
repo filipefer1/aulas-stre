@@ -1,3 +1,12 @@
+// const readline = require("readline");
+
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
+// });
+
+// let processos = [];
+
 function createDinamicArray(qnt) {
   const array = [];
   const emptyArray = new Array(qnt);
@@ -31,6 +40,7 @@ function escolherMenorDeadline(processos, qnt, deadlines) {
 }
 
 function edf(processos, qnt) {
+  console.log(processos);
   let relogio = 0;
   let deadlines = createDinamicArray(qnt);
   for (let i = 0; i < qnt; i++) {
@@ -80,6 +90,10 @@ function edf(processos, qnt) {
   }
 }
 
+// 0  1  2  3
+// id bt dl p
+//id = identidade; bt = burst time; dl = deadline; p = periodo
+
 const processos = [
   [0, 3, 7, 20],
   [1, 2, 4, 5],
@@ -88,3 +102,43 @@ const processos = [
 
 const qnt = processos.length;
 edf(processos, qnt);
+
+// async function run(qtdProcessos) {
+//   for await (const answer of questions(qtdProcessos)) {
+//     processos.push(answer);
+//     if (answer == "done") break;
+//   }
+
+//   const processosFormatados = processos.map((proc) =>
+//     proc.map((p) => {
+//       if (isNaN(p)) {
+//         return p;
+//       }
+//       return Number(p);
+//     })
+//   );
+
+//   console.log(processosFormatados);
+
+//   edf(processosFormatados, qtdProcessos);
+// }
+
+// async function* questions(qtd) {
+//   try {
+//     for (let i = 0; i < qtd; i++) {
+//       yield new Promise((resolve) =>
+//         rl.question("Burst Time: ", (bt) => {
+//           rl.question("Deadline:", (dl) => {
+//             rl.question("Periodo: ", (p) => resolve([i, bt, dl, p]));
+//           });
+//         })
+//       );
+//     }
+//   } finally {
+//     rl.close();
+//   }
+// }
+
+// rl.question("Quantidade de processos: ", (qtd) => {
+//   run(qtd);
+// });
